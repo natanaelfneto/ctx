@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load multiply %}
+{% load invoice_number_mask %}
+{% load i18n %}
+{% block content %}
+<style>
+    @media print {
+        body {
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        small, strong {
+            height: 0px !important;
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        span {
+            height: 0px !important;
+            padding: 0px !important;
+        }
+        table {
+            display: table;
+            height: 0px !important;
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        tbody {
+            height: 0px !important;
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        tr {
+            display: table-row;
+            height: 0px !important;
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+        td {
+            display: table-cell;
+            height: 0px !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            vertical-align: bottom;
+        }
+        div {
+            margin-top: 1px !important;
+            padding-top: 1px !important;
+        }
+        @page {
+            margin: 0.1cm;
+        }
+        .pace, .pace-inactive, .paceOptions, .pace-progress-inner, .pace-stripe-animation, .pace-progress, .pace-active, .nav, .navbar-header, .header, .footer, .breadcrumb, head, head link, head meta, head script {
+            display: none !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            height: 0px !important;
+            border: 0px !important;
+        }
+        .invoice-header, .invoice-content {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .invoice-header {
+            display: table !important;
+        }
+        .invoice-from, .invoice-to, .invoice-date {
+            display: table-cell !important;
+        }
+        .invoice-from {
+            width: 55% !important;
+        }
+        .invoice-to {
+            width: 30% !important;
+        }
+        .invoice-date {
+            text-align: right !important;
+        }
+        .invoice-footer {
+            position: absolute;
+            bottom: 0;
+        }
+    }
+</style>
+<div class="invoice">
+    <div class="invoice-company">
+        <span class="pull-right hidden-print">
+        <a 
+            href="javascript:;" 
+            onclick="window.print()" 
+            class="btn btn-sm btn-success m-b-10">
+            <i class="fa fa-print m-r-5"></i> Print
+        </a>
+        </span>
+        <small>CTX - Representante e Assistência Técnica de Equipamentos Elétricos LTDA.</small>
+        <img src="{% static 'img/ctx/ctx004.png' %}" alt="CTX Logo" height="auto" width="100%">
+    </div>
+    <div class="invoice-header">
+        <div class="invoice-from">
+            <small>Cliente</small>
+            <address class="m-t-5 m-b-5">
+                <strong>{{ object.client }}</strong><br>
+                {{ object.client.address }}<br>
+                {{ object.client.address.zip_code }}, {{ object.client.address.city }}/{{ object.client.address.state }}<br>
+                Phone: {{ object.client.phone }}<br>
+                CNPJ: {{ object.client.national_legal_number }}<br>
+                Inscrição Estadual: {{ object.client.state_legal_number }}<br>
+                Contato: {{ object.client.contact }}<br>
+            </address>
+        </div>
+        <div class="invoice-to">
+            <small>Equipamento</small>
+            <address class="m-t-5 m-b-5">
+                <strong>{{ object.equipment.type_of_equipment }}</strong><br>
+                {{ object.equipment.manufacture }}<br>
+                Modelo: {{ object.equipment.model }}<br>
+                Série: {{ object.equipment.serie }}<br><br>
+                Defeito Aprensentado:<br>
+                {{ object.issue }}<br>
+            </address>
+        </div>
+        <div class="invoice-date">
+            Ordem de Serviço
+            <div class="date m-t-5">
+                No. #{{ object.id|invoice_number_mask }}
+            </div>
+            <div class="invoice-detail">
+                {% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}<br>
+                OS Tipo <b>{{ object.type_of_invoice }}</b>
+            </div>
+        </div>
+    </div>
+    <div class="invoice-content">
+        <div class="table-responsive">
+            <table class="table table-invoice">
+                <thead>
+                    <tr>
+                        <th>DESCRITIVO DE MATERIAIS, SERVIÇO E TERCEIROS</th>
+                        <th class="text-center">QTD</th>
+                        <th class="text-center">PARCIAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in object.supplies.all %}
+                    <tr>
+                        <td>[{{ obj.date|date:"d/m/Y" }}] {{ obj.description }}</td>
+                        <td class="text-center">1</td>
+                        <td class="text-center">R$ {{ obj.value|multiply:1 }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>Deslocamento</td>
+                        <td class="text-center">{{ object.displacement }} km</td>
+                        <td class="text-center">R$ {{ object.displacement|multiply:250 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hora Trabalhada</td>
+                        <td class="text-center">{{ object.time }} horas</td>
+                        <td class="text-center">R$ {{ object.time|multiply:250 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="invoice-price">
+            <div class="invoice-price-left">
+            </div>
+            <div class="invoice-price-right">
+                <small>TOTAL</small>
+                <span style="font-size: 20px;">R$ {{ object.total_value|multiply:1 }}</span>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center m-b-20 m-t-20">Técnico Responsável</div>
+        <img 
+            class="d-block m-auto m-t-5" 
+            style="display: block" 
+            src="{% static 'img/ctx/nunes.png' %}" 
+            height="auto" width="150px">
+        <div class="text-center" style="position: relative; bottom: 25px;">
+            <h5>José Nunes da Silva Filho</h5>
+        </div>
+        <div class="row">
+            <span
+                style="
+                border-bottom-style: solid;
+                border-bottom-color: gray;
+                border-bottom-width: 1px;
+                width: 25%;
+                margin: auto;
+                display: block;
+                position: relative;
+                bottom: 60px;">
+            </span>
+        </div>
+        <div class="text-center" style="position: relative; bottom: 30px;">
+            <small>CREA: 7304/TD</small>
+        </div>
+    </div>
+    <div class="invoice-note">
+        * Observaçõs para os clientes<br>
+    </div>
+    <div class="invoice-footer text-muted">
+        <p class="text-center m-b-5">
+            CTX - Representante e Assistência Técnica de Equipamentos Elétricos LTDA.<br>
+            Rua C-189, Nº 292, Jardim América, CEP 74000-000 – Goiânia/GO<br>
+        </p>
+        <p class="text-center">
+            <span class="m-r-10"><i class="fa fa-globe"></i> https://ctx.com</span>
+            <span class="m-r-10"><i class="fa fa-phone"></i> (62) 3093-5019</span>
+            <span class="m-r-10"><i class="fa fa-envelope"></i> nunesctx@gmail.com</span>
+            <span class="m-r-10"><i class="fa fa-envelope"></i> CNPJ 01.276.117/0001-65</span>
+        </p>
+    </div>
+</div>
+{% endblock content %}

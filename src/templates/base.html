@@ -1,0 +1,204 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+	<meta charset="utf-8" />
+	<title>
+        CTX
+    </title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="ctx" name="description" />
+	<meta content="ctx" name="author" />
+	<!-- ================== BEGIN BASE CSS STYLE ================== -->
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+	<link href="{% static 'plugins/jquery-ui/themes/base/minified/jquery-ui.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'plugins/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/animate.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/style.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/style-responsive.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'css/theme/default.css' %}" rel="stylesheet" id="theme" />
+	<!-- ================== END BASE CSS STYLE ================== -->
+	
+	<!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+	<link href="{% static 'plugins/jquery-jvectormap/jquery-jvectormap.css' %}" rel="stylesheet" />
+	<link href="{% static 'plugins/bootstrap-datepicker/css/bootstrap-datepicker.css' %}" rel="stylesheet" />
+    <link href="{% static 'plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet" />
+	<!-- ================== END PAGE LEVEL STYLE ================== -->
+	
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="{% static 'plugins/pace/pace.min.js' %}"></script>
+	<!-- ================== END BASE JS ================== -->
+</head>
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+	
+	<!-- begin #page-container -->
+    <div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+        
+        <!-- begin #header -->
+        <div id="header" class="header navbar navbar-default navbar-fixed-top">
+            <!-- begin container-fluid -->
+            <div class="container-fluid">
+                <!-- begin mobile sidebar expand / collapse button -->
+                <div class="navbar-header">
+                    <a href="/" class="navbar-brand"><span class="navbar-logo"></span> CTX</a>
+                    <button type="button" class="navbar-toggle" data-click="sidebar-toggled">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <!-- end mobile sidebar expand / collapse button -->
+                
+                <!-- begin header navigation right -->
+                <ul class="nav navbar-nav navbar-right">
+                </ul>
+                <!-- end header navigation right -->
+            </div>
+            <!-- end container-fluid -->
+        </div>
+        <!-- end #header -->
+
+        <!-- begin #sidebar -->
+        <div id="sidebar" class="sidebar">
+            <!-- begin sidebar scrollbar -->
+            <div data-scrollbar="true" data-height="100%">
+                <!-- begin sidebar user -->
+                <ul class="nav">
+                    <li class="nav-profile">
+                        <div class="image">
+                            {% comment %}
+                            <a href="javascript:;">
+                                <img src="{% static 'img/user-13.jpg' %}" alt="" />
+                            </a>
+                            {% endcomment %}
+                        </div>
+                        <div class="info">
+                            {{ request.user }}
+                        </div>
+                    </li>
+                </ul>
+                <!-- end sidebar user -->
+                <!-- begin sidebar nav -->
+                <ul class="nav">
+                    <li class="nav-header">Administrativo</li>
+                    <li class="has-sub">
+                        <a href="javascript:;">
+                            <b class="caret pull-right"></b>
+                            <i class="fa fa-laptop"></i>
+                            <span>Ordem de Serviço</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="{% url 'invoice_add' %}">Cadastrar</a></li>
+                            <li><a href="{% url 'invoice_list' %}">Listar</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-sub">
+                        <a href="javascript:;">
+                            <b class="caret pull-right"></b>
+                            <i class="fa fa-laptop"></i>
+                            <span>Cliente</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="/admin/invoices/client/add/">Cadastrar</a></li>
+                            <li><a href="/admin/invoices/client/">Listar</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-sub">
+                        <a href="javascript:;">
+                            <b class="caret pull-right"></b>
+                            <i class="fa fa-laptop"></i>
+                            <span>Endereço</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="/admin/invoices/address/add/">Cadastrar</a></li>
+                            <li><a href="/admin/invoices/address/">Listar</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-sub">
+                        <a href="javascript:;">
+                            <b class="caret pull-right"></b>
+                            <i class="fa fa-laptop"></i>
+                            <span>Equipamento</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="/admin/invoices/equipment/add/">Cadastrar</a></li>
+                            <li><a href="/admin/invoices/equipment/">Listar</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-sub">
+                        <a href="javascript:;">
+                            <b class="caret pull-right"></b>
+                            <i class="fa fa-laptop"></i>
+                            <span>Serviços/Materiais</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="/admin/invoices/supply/add/">Cadastrar</a></li>
+                            <li><a href="/admin/invoices/supply/">Listar</a></li>
+                        </ul>
+                    </li>
+                        <a 
+                            href="javascript:;" 
+                            class="sidebar-minify-btn" 
+                            data-click="sidebar-minify">
+                                <i class="fa fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <!-- end sidebar minify button -->
+                </ul>
+                <!-- end sidebar nav -->
+            </div>
+            <!-- end sidebar scrollbar -->
+        </div>
+        <div class="sidebar-bg"></div>
+        <!-- end #sidebar -->
+
+        <div id="content" class="content">
+            {% block content %}
+            {% endblock content %}
+        </div>
+
+        <a 
+            href="javascript:;" 
+            class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" 
+            data-click="scroll-top">
+                <i class="fa fa-angle-up"></i>
+        </a>
+        <!-- end scroll to top btn -->
+
+    </div>
+	<!-- end page container -->
+	
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="{% static 'plugins/jquery/jquery-1.9.1.min.js' %}"></script>
+	<script src="{% static 'plugins/jquery/jquery-migrate-1.1.0.min.js' %}"></script>
+	<script src="{% static 'plugins/jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+	<script src="{% static 'plugins/jquery-cookie/jquery.cookie.js' %}"></script>
+	<!-- ================== END BASE JS ================== -->
+	
+	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+	<script src="{% static 'plugins/flot/jquery.flot.min.js' %}"></script>
+	<script src="{% static 'plugins/flot/jquery.flot.time.min.js' %}"></script>
+	<script src="{% static 'plugins/flot/jquery.flot.resize.min.js' %}"></script>
+	<script src="{% static 'plugins/flot/jquery.flot.pie.min.js' %}"></script>
+	<script src="{% static 'plugins/sparkline/jquery.sparkline.js' %}"></script>
+	<script src="{% static 'plugins/jquery-jvectormap/jquery-jvectormap.min.js' %}"></script>
+	<script src="{% static 'plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+	<script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+	<script src="{% static 'js/dashboard.min.js' %}"></script>
+	<script src="{% static 'js/apps.min.js' %}"></script>
+	<!-- ================== END PAGE LEVEL JS ================== -->
+	
+	<script>
+		$(document).ready(function() {
+			App.init();
+			Dashboard.init();
+		});
+	</script>
+</body>
+</html>

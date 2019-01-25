@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+<!-- begin breadcrumb -->
+<ol class="breadcrumb pull-right">
+    <li><a href="javascript:;">Início</a></li>
+</ol>
+<!-- end breadcrumb -->
+<!-- begin page-header -->
+<h1 class="page-header">Administrativo<small></small></h1>
+<!-- end page-header -->
+
+<div class="row">
+    <!-- begin col-12 -->
+    <div class="col-md-12 ui-sortable">
+        <!-- begin panel -->
+        <div class="panel panel-inverse" data-sortable-id="table-basic-7">
+            <div class="panel-heading">
+                <div class="panel-heading-btn">
+                    <a 
+                        href="javascript:;" 
+                        class="btn btn-xs btn-icon btn-circle btn-default" 
+                        data-click="panel-expand">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                    <a 
+                        href="javascript:;" 
+                        class="btn btn-xs btn-icon btn-circle btn-warning" 
+                        data-click="panel-collapse" 
+                        data-original-title="" 
+                        title="" 
+                        data-init="true">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                </div>
+                <h4 class="panel-title">Responsive Table</h4>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Defeito</th>
+                                <th>Tipo de Ordem de Serviço</th>
+                                <th>Valor</th>
+                                <th>Criada por</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in object_list %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'invoice_detail' obj.id %}">
+                                        {{ obj.id }}
+                                    </a>
+                                </td>
+                                <td>{{ obj.date }}</td>
+                                <td>{{ obj.client }}</td>
+                                <td>{{ obj.issue }}</td>
+                                <td>{{ obj.type_of_invoice }}</td>
+                                <td>{{ obj.total_value }}</td>
+                                <td>{{ obj.created_by }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if is_paginated %}
+                    <div class="email-footer clearfix">
+                        <ul 
+                            class="pagination pagination-sm m-t-0 m-b-0"
+                            style="display: flex;">
+                            <li style="margin-left: auto;">
+                                {% if page_obj.has_previous %}
+                                    <a href="/invoice?page={{ page_obj.previous_page_number }}">
+                                        <i class="fa fa-angle-double-left"></i>
+                                    </a>
+                                {% endif %}
+                            </li>
+                            <li style="border-width: 0;">
+                                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+                            <li style="margin-right: auto;">
+                                {% if page_obj.has_next %}
+                                <a href="/invoice?page={{ page_obj.next_page_number }}">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- end panel -->
+    </div>
+    <!-- end col-12 -->
+</div>
+
+{% endblock content %}

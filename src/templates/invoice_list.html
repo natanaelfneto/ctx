@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load invoice_number_mask %}
+{% load i18n %}
 {% block content %}
 <!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
@@ -34,20 +36,32 @@
                         <i class="fa fa-minus"></i>
                     </a>
                 </div>
-                <h4 class="panel-title">Responsive Table</h4>
+                <h4 class="panel-title">Ordens de Serviço</h4>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" style="margin-bottom: 0px;">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Número</th>.
                                 <th>Data</th>
-                                <th>Cliente</th>
-                                <th>Defeito</th>
-                                <th>Tipo de Ordem de Serviço</th>
-                                <th>Valor</th>
+                                <th>
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            Valor
+                                        </div>
+                                    </div>
+                                </th>
                                 <th>Criada por</th>
+                                <th>
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            Status
+                                        </div>
+                                    </div>
+                                </th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,15 +69,107 @@
                             <tr>
                                 <td>
                                     <a href="{% url 'invoice_detail' obj.id %}">
-                                        {{ obj.id }}
+                                        CTX-{{ obj.id|invoice_number_mask }}
                                     </a>
                                 </td>
-                                <td>{{ obj.date }}</td>
-                                <td>{{ obj.client }}</td>
-                                <td>{{ obj.issue }}</td>
-                                <td>{{ obj.type_of_invoice }}</td>
-                                <td>{{ obj.total_value }}</td>
+                                <td>{% language 'pt' %}{{ obj.date|date:"D, d/m/Y" }}{% endlanguage %}</td>
+                                <td>
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            {{ obj.total_value }}
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>{{ obj.created_by }}</td>
+                                <td>
+                                    {% if obj.status == "Pendente" %}
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <a type="button" class="btn btn-default" href="#">
+                                                {{ obj.status }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% elif obj.status == "Em Aberto" %}
+                                    <a type="button" class="btn btn-default" href="#">
+                                        {{ obj.status }}
+                                    </a>
+                                    {% elif obj.status == "Paga" %}
+                                    <a type="button" class="btn btn-default" href="#">
+                                        {{ obj.status }}
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a 
+                                        style="display: flex;"
+                                        href="#"
+                                        data-toggle="collapse" 
+                                        data-target="#collapse_row_{{ obj.id}}">
+                                        <div style="margin-left: auto;">
+                                            <i class="fa fa-info"></i>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a style="display: flex;" href="#">
+                                        <div style="margin-right: auto;">
+                                            <i class="fa fa-close" style="color: red;"></i>
+                                        </div>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="padding: 0px; border: none;">
+                                    <div class="collapse" id="collapse_row_{{ obj.id}}">
+                                        <div 
+                                            class="row"
+                                            style="
+                                                padding-left: 5px;
+                                                padding-right: 15px;
+                                                margin-top: 5px;
+                                                margin-bottom: 30px;
+                                                margin-left: 0px;
+                                                margin-right: 0px;">
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Cliente:</span>
+                                                    <span>{{ obj.client.name }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Nome Fantasia:</span>
+                                                    <span>{{ obj.client.trading_name }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">CNPJ:</span>
+                                                    <span>{{ obj.client.national_legal_number }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Inscrição Estadual:</span>
+                                                    <span>{{ obj.client.state_legal_number }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Defeito:</span>
+                                                    <span>{{ obj.issue }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Equipamento:</span>
+                                                    <span>{{ obj.equipment }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Tipo de Ordem de Serviço:</span>
+                                                    <span>{{ obj.type_of_invoice }}</span>
+                                                </div>
+                                                <div class="row">
+                                                    <span style="font-weight: bold;">Endereço do Serviço:</span>
+                                                    <span>{{ obj.service_address }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>

@@ -17,11 +17,15 @@ class InvoiceHelper(FormHelper):
                 css_class="form-group"
             ),
             Div(
-                Field('address', css_class="form-control"),
+                Field('service_address', css_class="form-control"),
                 css_class="form-group"
             ),
             Div(
                 Field('equipment', css_class="form-control"),
+                css_class="form-group"
+            ),
+            Div(
+                Field('serial_number', css_class="form-control"),
                 css_class="form-group"
             ),
             Div(
@@ -34,18 +38,6 @@ class InvoiceHelper(FormHelper):
             ),
             Div(
                 Field('invoice_description', css_class="form-control"),
-                css_class="form-group"
-            ),
-            Div(
-                Field('displacement', css_class="form-control"),
-                css_class="form-group"
-            ),
-            Div(
-                Field('time', css_class="form-control"),
-                css_class="form-group"
-            ),
-            Div(
-                Field('supplies', css_class="form-control"),
                 css_class="form-group"
             ),
             Submit('submit', 'Submit')

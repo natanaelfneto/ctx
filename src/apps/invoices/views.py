@@ -28,9 +28,10 @@ class InvoiceAddView(LoginRequiredMixin, CreateView):
             basic_user = get_object_or_404(BasicUser, pk=self.request.user.id)
             invoice = form.save()
             total_value = 0
-            for supply in invoice.supplies.all():
-                total_value = total_value + int(get_object_or_404(Supply, description=supply).value)
-            invoice.total_value = total_value + (invoice.displacement * 250)
+            # for supply in invoice.supplies.all():
+            #     total_value = total_value + int(get_object_or_404(Supply, description=supply).value)
+            # invoice.total_value = total_value + (invoice.displacement * 250)
+            invoice.total_value = total_value #bugfix
             invoice.created_by = basic_user
             invoice.save()
             self.success_url += str(invoice.id)
@@ -49,7 +50,7 @@ class InvoiceListView(LoginRequiredMixin, ListView):
     template_name = "invoice_list.html"
     page_title = "Lista de Ordens de Serviço"
     model = Invoice
-    queryset = list(reversed(Invoice.objects.filter()))
+    queryset = Invoice.objects.filter()
     form = []
     paginate_by = 10
 

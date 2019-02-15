@@ -11,13 +11,12 @@ class InvoiceForm(forms.ModelForm):
         fields = [
             'date',
             'client',
+            'service_address',
             'equipment',
+            'serial_number',
             'issue',
             'type_of_invoice',
             'invoice_description',
-            'displacement',
-            'time',
-            'supplies'
         ]
 
     def __init__(self, *args, **kwargs):

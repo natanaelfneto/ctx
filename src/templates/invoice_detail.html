@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+
 {% load multiply %}
 {% load invoice_number_mask %}
+{% load mask%}
 {% load i18n %}
+
 {% block content %}
 <style>
+    .invoice-date {
+        text-align: left !important;
+    }
     @media print {
         body {
             margin: 0px !important;
@@ -68,13 +74,16 @@
             display: table-cell !important;
         }
         .invoice-from {
-            width: 55% !important;
+            width: 70% !important;
         }
         .invoice-to {
-            width: 30% !important;
+            width: 0% !important;
         }
         .invoice-date {
-            text-align: right !important;
+            width: 100% !important;
+        }
+        .invoice-date {
+            text-align: left !important;
         }
         .invoice-footer {
             position: absolute;
@@ -82,16 +91,38 @@
         }
     }
 </style>
+<div>
+    {% if object.status == "Pendente" %}
+    <div class="alert alert-warning" style="margin-bottom: 0px;" role="alert">
+        Esta Ordem de Serviço ainda está com sua finalização <b>Pendente</b>
+    {% elif object.status == "Em Aberto" %}
+    <div class="alert alert-danger" style="margin-bottom: 0px;" role="alert">
+        {{ object.status }}
+    {% elif object.status == "Paga" %}
+    <div class="alert alert-success" style="margin-bottom: 0px;" role="alert">
+        {{ object.status }}
+    {% endif %}
+        <div class="pull-right hidden-print">
+            <a 
+                style="position: relative; bottom: 5px;"
+                href="javascript:;" 
+                onclick="window.print()" 
+                class="btn btn-sm btn-success">
+                <i class="fa fa-print m-r-5"></i> Print
+            </a>
+        </div>
+    </div>
+</div>
 <div class="invoice">
     <div class="invoice-company">
-        <span class="pull-right hidden-print">
-        <a 
-            href="javascript:;" 
-            onclick="window.print()" 
-            class="btn btn-sm btn-success m-b-10">
-            <i class="fa fa-print m-r-5"></i> Print
-        </a>
-        </span>
+        <small>Ordem de Serviço
+            <b>{{ object.date|date:"y" }}{{ object.id|invoice_number_mask:object.type_of_invoice }}</b>
+        </small>
+        <span style="position: absolute; right: 40px;">
+            <small>
+                {% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}
+            </small>
+        </span><br>
         <small>CTX - Representante e Assistência Técnica de Equipamentos Elétricos LTDA.</small>
         <img src="{% static 'img/ctx/ctx004.png' %}" alt="CTX Logo" height="auto" width="100%">
     </div>
@@ -100,34 +131,37 @@
             <small>Cliente</small>
             <address class="m-t-5 m-b-5">
                 <strong>{{ object.client }}</strong><br>
-                {{ object.client.address }}<br>
-                {{ object.client.address.zip_code }}, {{ object.client.address.city }}/{{ object.client.address.state }}<br>
-                Phone: {{ object.client.phone }}<br>
-                CNPJ: {{ object.client.national_legal_number }}<br>
-                Inscrição Estadual: {{ object.client.state_legal_number }}<br>
+                {{ object.client.trading_name }}<br>
+                {{ object.service_address }}<br>
+                CEP: {{ object.service_address.zip_code }},
+                {{ object.service_address.city }}/{{ object.service_address.state }}<br>
+                Phone: {{ object.client.phone|mask:"phone" }}<br>
+                CNPJ: {{ object.client.national_legal_number|mask:"cnpj" }}<br>
+                {% if object.client.state_legal_number %}
+                    Inscrição Estadual: {{ object.client.state_legal_number }}<br>
+                {% endif %}
                 Contato: {{ object.client.contact }}<br>
+                Setor: {{ object.client.contact_sector }}<br>
             </address>
         </div>
-        <div class="invoice-to">
+        <div class="invoice-date">
             <small>Equipamento</small>
             <address class="m-t-5 m-b-5">
                 <strong>{{ object.equipment.type_of_equipment }}</strong><br>
                 {{ object.equipment.manufacture }}<br>
                 Modelo: {{ object.equipment.model }}<br>
-                Série: {{ object.equipment.serie }}<br><br>
-                Defeito Aprensentado:<br>
-                {{ object.issue }}<br>
+                    Número Serial: 
+                {% if object.serie %}
+                    {{ object.serie }}<br>
+                {% else %}
+                    Não Fornecido<br>
+                {% endif %}
+                Defeito Aprensentado: {{ object.issue }}<br>
+                <br>
+                Ordem de Serviço Tipo: <b>{{ object.type_of_invoice }}</b><br>
+                Data: {% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}<br>
+                Identificador: {{ object.date|date:"y" }}{{ object.id|invoice_number_mask:object.type_of_invoice }}
             </address>
-        </div>
-        <div class="invoice-date">
-            Ordem de Serviço
-            <div class="date m-t-5">
-                No. #{{ object.id|invoice_number_mask }}
-            </div>
-            <div class="invoice-detail">
-                {% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}<br>
-                OS Tipo <b>{{ object.type_of_invoice }}</b>
-            </div>
         </div>
     </div>
     <div class="invoice-content">
@@ -144,20 +178,10 @@
                     {% for obj in object.supplies.all %}
                     <tr>
                         <td>[{{ obj.date|date:"d/m/Y" }}] {{ obj.description }}</td>
-                        <td class="text-center">1</td>
-                        <td class="text-center">R$ {{ obj.value|multiply:1 }}</td>
+                        <td class="text-center">{{ obj.amount }}</td>
+                        <td class="text-center">R$ {{ obj.value|multiply:obj.amount }}</td>
                     </tr>
                     {% endfor %}
-                    <tr>
-                        <td>Deslocamento</td>
-                        <td class="text-center">{{ object.displacement }} km</td>
-                        <td class="text-center">R$ {{ object.displacement|multiply:250 }}</td>
-                    </tr>
-                    <tr>
-                        <td>Hora Trabalhada</td>
-                        <td class="text-center">{{ object.time }} horas</td>
-                        <td class="text-center">R$ {{ object.time|multiply:250 }}</td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -197,7 +221,11 @@
         </div>
     </div>
     <div class="invoice-note">
-        * Observaçõs para os clientes<br>
+        * Observações<br>
+        <div class="row">
+            <div style="margin-top: 1rem; margin-left: 3rem;">
+                {{ object.invoice_description }}</div>
+        </div>
     </div>
     <div class="invoice-footer text-muted">
         <p class="text-center m-b-5">

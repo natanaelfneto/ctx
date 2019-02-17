@@ -181,22 +181,137 @@
     </div>
     <div class="invoice-content" style="margin-bottom: 0px;">
         <div class="table-responsive">
-            <table class="table table-invoice">
+            <table id="supplyTable" class="table table-invoice">
                 <thead>
                     <tr>
-                        <th>DESCRITIVO DE MATERIAIS, SERVIÇO E TERCEIROS</th>
-                        <th class="text-center">QTD</th>
-                        <th class="text-center">PARCIAL</th>
+                        <th class="col-md-6">DESCRITIVO DE MATERIAIS, SERVIÇO E TERCEIROS</th>
+                        <th class="col-md-2 text-center">Data</th>
+                        <th class="col-md-1 text-center">QTD</th>
+                        <th class="col-md-2 text-center">PARCIAL</th>
+                        <th class="col-md-1"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for obj in object.supplies.all %}
                     <tr>
-                        <td>[{{ obj.date|date:"d/m/Y" }}] {{ obj.description }}</td>
-                        <td class="text-center">{{ obj.amount }}</td>
-                        <td class="text-center">R$ {{ obj.value|multiply:obj.amount }}</td>
+                        <td class="col-md-6"><span>Troca do Fusível</span></td>
+                        <td class="col-md-2 text-center"><span>Qui, 05/04/2018</span></div></td>
+                        <td class="col-md-1 text-center"><span>2</span></td>
+                        <td class="col-md-2 text-center"><span>R$ 120</span></td>
+                        <td class="col-md-1 print-hidden">
+                            <div style="display: flex;">
+                                <div 
+                                    class="btn-group" 
+                                    role="group"
+                                    style="margin-left: auto; margin-right: auto;">
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" href="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-edit" style="color:#277777;"></i>
+                                        </div>
+                                    </a>
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" href="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-close" style="color: red;"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
-                    {% endfor %}
+                    <tr id="addNewSupplyButton" class="print-hidden">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <div style="display: flex;">
+                                <a 
+                                    style="margin-left: auto; margin-right: auto;"
+                                    type="button" 
+                                    class="btn btn-info"
+                                    href="#"
+                                    onclick="addNewSupply()">
+                                        Adicionar
+                                    </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="addNewSupplyObject" class="print-hidden" style="display: none;">
+                        <td class="col-md-6">
+                            <input
+                                type="text" 
+                                class="form-control" 
+                                style="width: 100%;" 
+                                placeholder="Material/Serviço">
+                        </td>
+                        <td class="col-md-2 text-center">
+                            <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    style="
+                                        width: 80%; 
+                                        margin-left: auto; 
+                                        margin-right: auto; 
+                                        text-align: center;"
+                                    placeholder="_ _/_ _/_ _ _ _">
+                        </td>
+                        <td class="col-md-1 text-center">
+                            <div style="display: flex;">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    style="
+                                        width: 100%; 
+                                        margin-left: auto; 
+                                        margin-right: auto; 
+                                        text-align: center;"
+                                    placeholder="0">
+                            </div>
+                        </td>
+                        <td class="col-md-2 text-center">
+                            <div style="display: flex;">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    style="
+                                        width: 80%; 
+                                        margin-left: auto; 
+                                        margin-right: auto; 
+                                        text-align: center;"
+                                    placeholder="R$ 0.00">
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-center">
+                            <div style="display: flex;">
+                                <div 
+                                    class="btn-group" 
+                                    role="group"
+                                    style="margin-left: auto; margin-right: auto;">
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" href="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-check" style="color: green;"></i>
+                                        </div>
+                                    </a>
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" href="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-close" style="color: red;"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -258,4 +373,25 @@
         </p>
     </div>
 </div>
+<script>
+    document.getElementById("addNewSupplyButton")
+        .addEventListener("click", function(event){
+            event.preventDefault()
+        });
+    function addNewSupply() {
+        /*
+        Function to select the element with inputs, clone it, make it visible
+        and append it on every "Add New" click
+        */
+        let source = document.getElementById("addNewSupplyObject");
+        let destination = document.getElementsByTagName("tbody")[0];
+        let last_supply = document.getElementById("addNewSupplyButton");
+
+        cloned_source = source.cloneNode(true);
+        cloned_source.style.display = "table-row";
+        last_supply.parentNode.insertBefore(cloned_source, last_supply);
+
+        return false;
+    }
+</script>
 {% endblock content %}

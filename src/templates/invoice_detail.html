@@ -12,9 +12,15 @@
         text-align: left !important;
     }
     @media print {
+        .print-hidden {
+            display: none !important;
+        }
         body {
             margin: 0px !important;
             padding: 0px !important;
+            height:100% !important; 
+            max-height:1000px !important; 
+            overflow: hidden !important;
         }
         small, strong {
             height: 0px !important;
@@ -54,9 +60,14 @@
             padding-top: 1px !important;
         }
         @page {
-            margin: 0.1cm;
+            margin: 0cm;
         }
-        .pace, .pace-inactive, .paceOptions, .pace-progress-inner, .pace-stripe-animation, .pace-progress, .pace-active, .nav, .navbar-header, .header, .footer, .breadcrumb, head, head link, head meta, head script {
+        .pace, .pace-inactive, .paceOptions,
+        .pace-progress-inner, .pace-stripe-animation,
+        .pace-progress, .pace-active, 
+        .nav, .navbar-header, .header, 
+        .footer, .breadcrumb, head, head link, 
+        head meta, head script {
             display: none !important;
             margin: 0px !important;
             padding: 0px !important;
@@ -64,8 +75,8 @@
             border: 0px !important;
         }
         .invoice-header, .invoice-content {
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
         }
         .invoice-header {
             display: table !important;
@@ -86,8 +97,9 @@
             text-align: left !important;
         }
         .invoice-footer {
-            position: absolute;
-            bottom: 0;
+            position: absolute !important;
+            bottom: 1% !important;
+            left: 25% !important;
         }
     }
 </style>
@@ -114,16 +126,19 @@
     </div>
 </div>
 <div class="invoice">
-    <div class="invoice-company">
+    <div class="invoice-company" style="margin-bottom: 0px;">
         <small>Ordem de Serviço
             <b>{{ object.date|date:"y" }}{{ object.id|invoice_number_mask:object.type_of_invoice }}</b>
         </small>
         <span style="position: absolute; right: 40px;">
-            <small>
+            <h5>
                 {% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}
-            </small>
+            </h5>
         </span><br>
-        <small>CTX - Representante e Assistência Técnica de Equipamentos Elétricos LTDA.</small>
+        <h5
+            style="position: relative; top: 0px; margin: 0px;">
+            CTX - Representante e Assistência Técnica de Equipamentos Elétricos LTDA.
+        </h5>
         <img src="{% static 'img/ctx/ctx004.png' %}" alt="CTX Logo" height="auto" width="100%">
     </div>
     <div class="invoice-header">
@@ -164,7 +179,7 @@
             </address>
         </div>
     </div>
-    <div class="invoice-content">
+    <div class="invoice-content" style="margin-bottom: 0px;">
         <div class="table-responsive">
             <table class="table table-invoice">
                 <thead>
@@ -193,15 +208,18 @@
                 <span style="font-size: 20px;">R$ {{ object.total_value|multiply:1 }}</span>
             </div>
         </div>
-        <hr>
-        <div class="text-center m-b-20 m-t-20">Técnico Responsável</div>
+        <hr style="margin-bottom: 0px;;">
         <img 
-            class="d-block m-auto m-t-5" 
-            style="display: block" 
+            class="d-block m-auto" 
+            style="display: block; position: relative; top: 30px; right: 5px;" 
             src="{% static 'img/ctx/nunes.png' %}" 
             height="auto" width="150px">
-        <div class="text-center" style="position: relative; bottom: 25px;">
+        <div class="text-center" style="position: relative; top: 5px;">
             <h5>José Nunes da Silva Filho</h5>
+        </div>
+        <br>
+        <div class="text-center" style="position: relative; bottom: 20px;">
+            Técnico Responsável
         </div>
         <div class="row">
             <span
@@ -216,11 +234,11 @@
                 bottom: 60px;">
             </span>
         </div>
-        <div class="text-center" style="position: relative; bottom: 30px;">
+        <div class="text-center" style="position: relative; bottom: 25px;">
             <small>CREA: 7304/TD</small>
         </div>
     </div>
-    <div class="invoice-note">
+    <div class="invoice-note" style="margin-top: 1rem;">
         * Observações<br>
         <div class="row">
             <div style="margin-top: 1rem; margin-left: 3rem;">

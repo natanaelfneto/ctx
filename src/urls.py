@@ -33,6 +33,9 @@ urlpatterns = [
     #
     url(r'^invoice/(?P<pk>\d+)/$', InvoiceDetailView.as_view(), name='invoice_detail'),
 
+    #
+    url(r'^invoice/(?P<pk>\d+)/delete/$', InvoiceDeleteView.as_view(), name='invoice_delete'),
+
     # app admin
     path('admin/', admin.site.urls),
 ]

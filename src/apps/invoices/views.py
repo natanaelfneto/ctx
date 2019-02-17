@@ -2,12 +2,12 @@
 #django imports
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, ListView
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView, DetailView, ListView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
-
 
 # self import
 from accounts.models import *
@@ -70,3 +70,10 @@ class InvoiceDetailView(DetailView):
         context['page_title'] = self.page_title
         return context
 
+
+class InvoiceDeleteView(DeleteView):
+    model = Invoice
+    success_url = reverse_lazy('invoice_list')
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)

@@ -65,38 +65,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for obj in object_list %}
+                            {% for object in object_list %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'invoice_detail' obj.id %}">
-                                        CTX-{{ obj.id|invoice_number_mask }}
+                                    <a href="{% url 'invoice_detail' object.id %}">
+                                        CTX-{{ object.id|invoice_number_mask:object.type_of_invoice }}
                                     </a>
                                 </td>
-                                <td>{% language 'pt' %}{{ obj.date|date:"D, d/m/Y" }}{% endlanguage %}</td>
+                                <td>{% language 'pt' %}{{ object.date|date:"D, d/m/Y" }}{% endlanguage %}</td>
                                 <td>
                                     <div style="display: flex;">
                                         <div style="margin-left: auto; margin-right: auto;">
-                                            {{ obj.total_value }}
+                                            {{ object.total_value }}
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ obj.created_by }}</td>
+                                <td>{{ object.created_by }}</td>
                                 <td>
-                                    {% if obj.status == "Pendente" %}
+                                    {% if object.status == "Pendente" %}
                                     <div style="display: flex;">
                                         <div style="margin-left: auto; margin-right: auto;">
                                             <a type="button" class="btn btn-default" href="#">
-                                                {{ obj.status }}
+                                                {{ object.status }}
                                             </a>
                                         </div>
                                     </div>
-                                    {% elif obj.status == "Em Aberto" %}
+                                    {% elif object.status == "Em Aberto" %}
                                     <a type="button" class="btn btn-default" href="#">
-                                        {{ obj.status }}
+                                        {{ object.status }}
                                     </a>
-                                    {% elif obj.status == "Paga" %}
+                                    {% elif object.status == "Paga" %}
                                     <a type="button" class="btn btn-default" href="#">
-                                        {{ obj.status }}
+                                        {{ object.status }}
                                     </a>
                                     {% endif %}
                                 </td>
@@ -105,14 +105,14 @@
                                         style="display: flex;"
                                         href="#"
                                         data-toggle="collapse" 
-                                        data-target="#collapse_row_{{ obj.id}}">
+                                        data-target="#collapse_row_{{ object.id}}">
                                         <div style="margin-left: auto;">
                                             <i class="fa fa-info"></i>
                                         </div>
                                     </a>
                                 </td>
                                 <td>
-                                    <a style="display: flex;" href="#">
+                                    <a style="display: flex;" href="{% url 'invoice_delete' object.id %}">
                                         <div style="margin-right: auto;">
                                             <i class="fa fa-close" style="color: red;"></i>
                                         </div>
@@ -121,7 +121,7 @@
                             </tr>
                             <tr>
                                 <td colspan="6" style="padding: 0px; border: none;">
-                                    <div class="collapse" id="collapse_row_{{ obj.id}}">
+                                    <div class="collapse" id="collapse_row_{{ object.id}}">
                                         <div 
                                             class="row"
                                             style="
@@ -134,37 +134,37 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Cliente:</span>
-                                                    <span>{{ obj.client.name }}</span>
+                                                    <span>{{ object.client.name }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Nome Fantasia:</span>
-                                                    <span>{{ obj.client.trading_name }}</span>
+                                                    <span>{{ object.client.trading_name }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">CNPJ:</span>
-                                                    <span>{{ obj.client.national_legal_number }}</span>
+                                                    <span>{{ object.client.national_legal_number }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Inscrição Estadual:</span>
-                                                    <span>{{ obj.client.state_legal_number }}</span>
+                                                    <span>{{ object.client.state_legal_number }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Defeito:</span>
-                                                    <span>{{ obj.issue }}</span>
+                                                    <span>{{ object.issue }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Equipamento:</span>
-                                                    <span>{{ obj.equipment }}</span>
+                                                    <span>{{ object.equipment }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Tipo de Ordem de Serviço:</span>
-                                                    <span>{{ obj.type_of_invoice }}</span>
+                                                    <span>{{ object.type_of_invoice }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Endereço do Serviço:</span>
-                                                    <span>{{ obj.service_address }}</span>
+                                                    <span>{{ object.service_address }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -180,18 +180,18 @@
                             class="pagination pagination-sm m-t-0 m-b-0"
                             style="display: flex;">
                             <li style="margin-left: auto;">
-                                {% if page_obj.has_previous %}
-                                    <a href="/invoice?page={{ page_obj.previous_page_number }}">
+                                {% if page_object.has_previous %}
+                                    <a href="/invoice?page={{ page_object.previous_page_number }}">
                                         <i class="fa fa-angle-double-left"></i>
                                     </a>
                                 {% endif %}
                             </li>
                             <li style="border-width: 0;">
-                                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                                <span>Página {{ page_object.number }} de {{ page_object.paginator.num_pages }}</span>
                             </li>
                             <li style="margin-right: auto;">
-                                {% if page_obj.has_next %}
-                                <a href="/invoice?page={{ page_obj.next_page_number }}">
+                                {% if page_object.has_next %}
+                                <a href="/invoice?page={{ page_object.next_page_number }}">
                                     <i class="fa fa-angle-double-right"></i>
                                 </a>
                                 {% endif %}

@@ -192,37 +192,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="col-md-6"><span>Troca do Fusível</span></td>
-                        <td class="col-md-2 text-center"><span>Qui, 05/04/2018</span></div></td>
-                        <td class="col-md-1 text-center"><span>2</span></td>
-                        <td class="col-md-2 text-center"><span>R$ 120</span></td>
-                        <td class="col-md-1 print-hidden">
-                            <div style="display: flex;">
-                                <div 
-                                    class="btn-group" 
-                                    role="group"
-                                    style="margin-left: auto; margin-right: auto;">
-                                    <a 
-                                        style="background-color: white; border: none;"
-                                        type="button" 
-                                        class="btn btn-default" href="">
-                                        <div style="margin-left: auto; margin-right: auto;">
-                                            <i class="fa fa-edit" style="color:#277777;"></i>
-                                        </div>
-                                    </a>
-                                    <a 
-                                        style="background-color: white; border: none;"
-                                        type="button" 
-                                        class="btn btn-default" href="">
-                                        <div style="margin-left: auto; margin-right: auto;">
-                                            <i class="fa fa-close" style="color: red;"></i>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
                     <tr id="addNewSupplyButton" class="print-hidden">
                         <td></td>
                         <td></td>
@@ -234,7 +203,7 @@
                                     style="margin-left: auto; margin-right: auto;"
                                     type="button" 
                                     class="btn btn-info"
-                                    href="#"
+                                    href="#/"
                                     onclick="addNewSupply()">
                                         Adicionar
                                     </a>
@@ -245,46 +214,58 @@
                         <td class="col-md-6">
                             <input
                                 type="text" 
-                                class="form-control" 
+                                class="form-control description" 
                                 style="width: 100%;" 
                                 placeholder="Material/Serviço">
                         </td>
                         <td class="col-md-2 text-center">
                             <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    style="
-                                        width: 80%; 
-                                        margin-left: auto; 
-                                        margin-right: auto; 
-                                        text-align: center;"
-                                    placeholder="_ _/_ _/_ _ _ _">
+                                type="text" 
+                                class="form-control date" 
+                                style="
+                                    width: 80%; 
+                                    margin-left: auto; 
+                                    margin-right: auto; 
+                                    text-align: center;"
+                                placeholder="_ _/_ _/_ _ _ _">
                         </td>
-                        <td class="col-md-1 text-center">
-                            <div style="display: flex;">
+                        <td class="col-md-2 text-center">
+                            <div style="display: flex">
                                 <input 
                                     type="text" 
-                                    class="form-control" 
+                                    class="form-control amount" 
                                     style="
-                                        width: 100%; 
+                                        width: 70%; 
                                         margin-left: auto; 
                                         margin-right: auto; 
                                         text-align: center;"
                                     placeholder="0">
+                                <select 
+                                    type="text" 
+                                    class="form-control unit" 
+                                    style="
+                                        width: 100%; 
+                                        margin-left: auto; 
+                                        margin-right: auto; 
+                                        text-align: center;">
+                                    <option value=""> -- </option>
+                                    <option value="Kilômetro(s)">Km</option>
+                                    <option value="Kilograma(s)">Kg</option>
+                                    <option value="Unidade(s)">Uni</option>
+                                    <option value="Hora(s)">H</option>
+                                </select>
                             </div>
                         </td>
                         <td class="col-md-2 text-center">
-                            <div style="display: flex;">
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    style="
-                                        width: 80%; 
-                                        margin-left: auto; 
-                                        margin-right: auto; 
-                                        text-align: center;"
-                                    placeholder="R$ 0.00">
-                            </div>
+                            <input 
+                                type="text" 
+                                class="form-control value" 
+                                style="
+                                    width: 80%; 
+                                    margin-left: auto; 
+                                    margin-right: auto; 
+                                    text-align: center;"
+                                placeholder="R$ 0.00">
                         </td>
                         <td class="col-md-1 text-center">
                             <div style="display: flex;">
@@ -293,9 +274,12 @@
                                     role="group"
                                     style="margin-left: auto; margin-right: auto;">
                                     <a 
+                                        id="1"
                                         style="background-color: white; border: none;"
                                         type="button" 
-                                        class="btn btn-default" href="">
+                                        class="btn btn-default"
+                                        href="#/"
+                                        onclick="confirmSupply(this)">
                                         <div style="margin-left: auto; margin-right: auto;">
                                             <i class="fa fa-check" style="color: green;"></i>
                                         </div>
@@ -303,7 +287,9 @@
                                     <a 
                                         style="background-color: white; border: none;"
                                         type="button" 
-                                        class="btn btn-default" href="">
+                                        class="btn btn-default"
+                                        href="#/"
+                                        onclick="removeSupply(this)">
                                         <div style="margin-left: auto; margin-right: auto;">
                                             <i class="fa fa-close" style="color: red;"></i>
                                         </div>
@@ -312,6 +298,44 @@
                             </div>
                         </td>
                     </tr>
+                    <tr id="standardTableRow" class="print-hidden" style="display: none;">
+                            <td class="col-md-6"><span class="description">Material/Serviço</span></td>
+                            <td class="col-md-2 text-center"><span class="date">Data</span></div></td>
+                            <td class="col-md-1 text-center">
+                                <span class="amount">Quantidade</span>
+                                <span class="unit">Unidade</span>
+                            </td>
+                            <td class="col-md-2 text-center"><span class="value">Valor</span></td>
+                            <td class="col-md-1 print-hidden">
+                                <div style="display: flex;">
+                                    <div 
+                                        class="btn-group" 
+                                        role="group"
+                                        style="margin-left: auto; margin-right: auto;">
+                                        <a 
+                                            style="background-color: white; border: none;"
+                                            type="button" 
+                                            class="btn btn-default"
+                                            href="#/"
+                                            onclick="">
+                                            <div style="margin-left: auto; margin-right: auto;">
+                                                <i class="fa fa-edit" style="color:#277777;"></i>
+                                            </div>
+                                        </a>
+                                        <a 
+                                            style="background-color: white; border: none;"
+                                            type="button" 
+                                            class="btn btn-default" 
+                                            href="#/"
+                                            onclick="removeSupply(this)">
+                                            <div style="margin-left: auto; margin-right: auto;">
+                                                <i class="fa fa-close" style="color: red;"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                 </tbody>
             </table>
         </div>
@@ -374,24 +398,130 @@
     </div>
 </div>
 <script>
-    document.getElementById("addNewSupplyButton")
-        .addEventListener("click", function(event){
-            event.preventDefault()
-        });
     function addNewSupply() {
         /*
-        Function to select the element with inputs, clone it, make it visible
-        and append it on every "Add New" click
+        Function to select the element with inputs, clone it,
+        make it visible and append it on every "Add New" click
         */
         let source = document.getElementById("addNewSupplyObject");
-        let destination = document.getElementsByTagName("tbody")[0];
         let last_supply = document.getElementById("addNewSupplyButton");
 
+        // clone original element
         cloned_source = source.cloneNode(true);
-        cloned_source.style.display = "table-row";
-        last_supply.parentNode.insertBefore(cloned_source, last_supply);
 
-        return false;
+        // change display attribute from 'none' to 'table-row'
+        cloned_source.style.display = "table-row";
+
+        //
+        cloned_source.id = "";
+
+        // insert cloned element after last present supply element
+        last_supply.parentNode.insertBefore(cloned_source, last_supply);
+    }
+
+    function removeSupply(self) {
+        /*
+        Function to remove a row from table '<tr>'
+        */
+        self.closest("tr").remove();
+    }
+
+    function editSupply() {
+        /**/
+    }
+
+    function confirmSupply(self) {
+        /*
+        Function to transform row of editable inputs
+        into a fixed printable table row
+        */
+        let source = document.getElementById("standardTableRow");
+        let self_row = self.closest("tr");
+        // clone original element
+        cloned_source = source.cloneNode(true);
+        // change display attribute from 'none' to 'table-row'
+        cloned_source.style.display = "table-row";
+        // removing id from cloned element
+        cloned_source.id = "";
+        // setting up variables
+        let supply_date = '';
+        let supply_description = '';
+        let supply_amount = '';
+        let supply_unit = '';
+        let supply_value = '';
+        // validation flag for empty or null values
+        let validation_flag = false;
+        // check if row has valid children
+        if (self_row.hasChildNodes()) {
+            var children = self_row.childNodes;
+            // loop through children elements
+            for (var i = 0; i < children.length; i++) {
+                // check if each children also has valid children
+                if (children[i].hasChildNodes()) {
+                    // check if any of children is an input element
+                    if (children[i].querySelector("[type='text']")) {
+                        let child_inputs = children[i].querySelectorAll("[type='text']");
+                        // get supply values
+                        child_inputs.forEach(function(input) {
+                            if (input.classList.contains("description")) {
+                                supply_description = input.value;
+                            } else if (input.classList.contains("value")) {
+                                supply_value = input.value;
+                            } else if (input.classList.contains("date")) {
+                                supply_date = input.value;
+                            } else if (input.classList.contains("amount")) {
+                                supply_amount = input.value;
+                            } else if (input.classList.contains("unit")) {
+                                supply_unit = input.value;
+                            }
+                        });
+                    }
+                }
+            }
+        } else {
+            alert("This element has no valid children!");
+        }
+        // check if any value from inputs are empty or null
+        if (supply_description && supply_amount && supply_unit && supply_value && supply_date) {
+            validation_flag = true;
+        }
+        //
+        if (validation_flag) {
+            if (cloned_source.hasChildNodes()) {
+                var children = cloned_source.childNodes;
+                // loop through found children nodes
+                for (var i = 0; i < children.length; i++) {
+                    // check if each children also has valid children
+                    if (children[i].hasChildNodes()) {
+                        // check if any of children is a span element
+                        if (children[i].querySelector("span")) {
+                            // get all span elements
+                            let child_span = children[i].querySelectorAll("span");
+                            // loop through found span elements
+                            child_span.forEach(function(span) {
+                                if (span.classList.contains("description")) {
+                                    span.textContent = supply_description;
+                                } else if (span.classList.contains("value")) {
+                                    span.textContent = supply_value;
+                                } else  if (span.classList.contains("date")) {
+                                    span.textContent = supply_date;
+                                } else if (span.classList.contains("amount")) {
+                                    span.textContent = supply_amount;
+                                } else if (span.classList.contains("unit")) {
+                                    span.textContent = supply_unit;
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            // insert cloned element after last present supply element
+            self_row.parentNode.insertBefore(cloned_source, self_row);
+            // remove editable row
+            self_row.remove();
+        } else {
+            alert("Field value is invalid!");
+        }
     }
 </script>
 {% endblock content %}

@@ -5,12 +5,20 @@ from django.template.defaultfilters import stringfilter
 register = template.Library()
 
 @register.filter(name='mask')
-def invoice_number_mask(value, arg):
+def mask(value, arg):
     if str(arg) == "phone":
-        masked_value = f'({value[0:1]}) {value[2:4]}-{value[5:7]}-{value[8:10]}'        
+        print(len(value))
+        if len(value) == 10:
+            masked_value = f'({value[0:2]}) {value[2:6]}-{value[6:]}'        
+        elif len(value) == 11:
+            masked_value = f'({value[0:2]}) {value[2:5]}-{value[5:8]}-{value[8:]}'        
+        else:
+            masked_value = 'oq?'
     elif str(arg) == "cnpj":
-        masked_value = f'{value[0:1]}.{value[2:4]}.{value[5:7]}/{value[8:11]}-{value[12:13]}'
-    if str(arg) == "value":
+        masked_value = f'{value[0:2]}.{value[2:5]}.{value[5:8]}/{value[8:12]}-{value[12:]}'
+    elif str(arg) == "cep":
+        masked_value = f'{value[0:2]}.{value[2:5]}-{value[5:]}'
+    elif str(arg) == "value":
         masked_value = f'R$ {float(value):.2f}'
     else:
         masked_value = value

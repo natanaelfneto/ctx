@@ -3,7 +3,7 @@
 
 {% load multiply %}
 {% load invoice_number_mask %}
-{% load mask%}
+{% load mask %}
 {% load i18n %}
 
 {% block content %}
@@ -177,12 +177,15 @@
                 <strong>{{ object.client }}</strong><br>
                 {{ object.client.trading_name }}<br>
                 {{ object.service_address }}<br>
-                CEP: {{ object.service_address.zip_code }},
+                CEP: {{ object.service_address.zip_code|mask:"cep" }},
                 {{ object.service_address.city }}/{{ object.service_address.state }}<br>
-                <span class="mask-phone-cell">Phone: {{ object.client.phone }}</span><br>
+                <span>Phone: {{ object.client.phone|mask:"phone" }}</span><br>
                 CNPJ: {{ object.client.national_legal_number|mask:"cnpj" }}<br>
+                Inscrição Estadual:
                 {% if object.client.state_legal_number %}
-                    Inscrição Estadual: {{ object.client.state_legal_number }}<br>
+                    {{ object.client.state_legal_number }}<br>
+                {% else %}
+                    Não Informado<br>
                 {% endif %}
                 Contato: {{ object.client.contact }}<br>
                 Setor: {{ object.client.contact_sector }}<br>

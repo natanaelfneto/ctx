@@ -55,8 +55,8 @@ class Address(models.Model):
             {self.public_place_type} \
             {self.public_place_name}, \
             Nº{self.number}, \
-            {self.sector}, \
-            {self.complement}'
+            {self.sector}\
+            {", "+self.complement if self.complement else ""}'
 
         return full_address
 
@@ -80,7 +80,7 @@ class Client(models.Model):
     trading_name = models.CharField(max_length=255, verbose_name="Nome Fantasia")
     contact = models.CharField(max_length=255, verbose_name="Contato")
     contact_sector = models.CharField(max_length=255, verbose_name="Setor")
-    phone = models.CharField(max_length=11, verbose_name="Telefone", validators=[MinLengthValidator(11)])
+    phone = models.CharField(max_length=11, verbose_name="Telefone", validators=[MinLengthValidator(10)])
     national_legal_number = models.CharField(max_length=14, verbose_name="CNPJ", validators=[MinLengthValidator(14)])
     state_legal_number = models.CharField(max_length=255, verbose_name="Inscrição Estadual", blank=True, null=True)
 
@@ -99,7 +99,7 @@ class Supply(models.Model):
     amount = models.FloatField(verbose_name="Quantidade")
     unit = models.CharField(max_length=255, choices=UNIT, verbose_name="Unidade de Medida")
     value = models.FloatField(verbose_name="Valor Unitário")
-    invoice_parent = models.ForeignKey('invoices.invoice', on_delete=models.DO_NOTHING, verbose_name="Ordem de Serviço", blank=True, null=True)
+    invoice_parent = models.ForeignKey('invoices.invoice', on_delete=models.CASCADE, verbose_name="Ordem de Serviço", blank=True, null=True)
 
     class Meta:
         db_table = 'supply'

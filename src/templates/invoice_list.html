@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+
 {% load crispy_forms_tags %}
 {% load invoice_number_mask %}
+{% load mask%}
 {% load i18n %}
+
 {% block content %}
 <!-- begin breadcrumb -->
 <ol class="breadcrumb pull-right">
@@ -76,7 +79,7 @@
                                 <td>
                                     <div style="display: flex;">
                                         <div style="margin-left: auto; margin-right: auto;">
-                                            {{ object.total_value }}
+                                            {{ object.total_value|mask:"value" }}
                                         </div>
                                     </div>
                                 </td>
@@ -150,11 +153,15 @@
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">CNPJ:</span>
-                                                    <span>{{ object.client.national_legal_number }}</span>
+                                                    <span>{{ object.client.national_legal_number|mask:"cnpj" }}</span>
                                                 </div>
                                                 <div class="row">
                                                     <span style="font-weight: bold;">Inscrição Estadual:</span>
+                                                    {% if object.client.state_legal_number %}
                                                     <span>{{ object.client.state_legal_number }}</span>
+                                                    {% else %}
+                                                        <span>Não Informado</span>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -167,11 +174,17 @@
                                                     <span>{{ object.equipment }}</span>
                                                 </div>
                                                 <div class="row">
-                                                    <span style="font-weight: bold;">Tipo de Ordem de Serviço:</span>
+                                                    <span
+                                                        style="font-weight: bold;">
+                                                        Tipo de Ordem de Serviço:
+                                                    </span>
                                                     <span>{{ object.type_of_invoice }}</span>
                                                 </div>
                                                 <div class="row">
-                                                    <span style="font-weight: bold;">Endereço do Serviço:</span>
+                                                    <span 
+                                                        style="font-weight: bold;">
+                                                        Endereço do Serviço:
+                                                    </span>
                                                     <span>{{ object.service_address }}</span>
                                                 </div>
                                             </div>

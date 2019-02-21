@@ -69,13 +69,11 @@
                 <!-- begin sidebar user -->
                 <ul class="nav">
                     <li class="nav-profile">
-                        <div class="image">
-                            {% comment %}
+                        <!-- <div class="image">
                             <a href="javascript:;">
                                 <img src="{% static 'img/user-13.jpg' %}" alt="" />
                             </a>
-                            {% endcomment %}
-                        </div>
+                        </div> -->
                         <div class="info">
                             {{ request.user }}
                         </div>
@@ -88,7 +86,7 @@
                     <li class="has-sub">
                         <a href="javascript:;">
                             <b class="caret pull-right"></b>
-                            <i class="fa fa-laptop"></i>
+                            <i class="fa fa-file-text-o"></i>
                             <span>Ordem de Serviço</span>
                         </a>
                         <ul class="sub-menu">
@@ -110,7 +108,7 @@
                     <li class="has-sub">
                         <a href="javascript:;">
                             <b class="caret pull-right"></b>
-                            <i class="fa fa-map"></i>
+                            <i class="fa fa-map-marker"></i>
                             <span>Endereço</span>
                         </a>
                         <ul class="sub-menu">
@@ -196,6 +194,7 @@
     <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
     <script src="{% static 'plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt.min.js' %}" charset="UTF-8"></script>
 	<script>
+        //
         function addDatePicker(selector) {
             $(selector).datepicker({
                 format: 'dd/mm/yyyy',
@@ -203,13 +202,19 @@
                 todayHighlight: true,
                 clearBtn: true,
                 language: "pt-BR",
-                toggleActive: true
+                // toggleActive: true
             });
         }
 		$(document).ready(function() {
 			App.init();
             Dashboard.init();
-            $('input[name="date"]').attr('autocomplete', 'off');
+            //
+            $('input[name="date"]')
+                .attr('autocomplete', 'off')
+                .on('changeDate', function(event){
+                    $(this).datepicker('hide');
+                });
+            //
             addDatePicker('input[name="date"]');
 		});
     </script>

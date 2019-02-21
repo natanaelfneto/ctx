@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.views.generic.base import RedirectView
 
 # apps imports
@@ -19,7 +19,8 @@ admin.site.site_header = settings.NAME
 urlpatterns = [
 
     #
-    url(r'^$', IndexView.as_view(), name='index'),
+    # url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('invoice_list'), permanent=False), name='index'),
 
     # app accounts
     url(r'^accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),

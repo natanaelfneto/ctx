@@ -27,11 +27,6 @@ TYPE_OF_INVOICE = (
     ('Instalação', 'Instalação'),
 )
 
-TYPE_OF_SUPPLY = (
-    ('Hora Trabalhada', 'Hora Trabalhada'),
-    ('Outros', 'Outros'),
-)
-
 UNIT = (
     ('Kilômetro(s)', 'Kilômetro(s)'),
     ('Kilograma(s)', 'Kilograma(s)'),
@@ -99,7 +94,6 @@ class Client(models.Model):
 
 
 class Supply(models.Model):
-    type_of_supply = models.CharField(max_length=255, choices=TYPE_OF_SUPPLY, verbose_name="Unidade de Medida")
     date = models.DateTimeField(auto_now=False, auto_now_add=False, verbose_name="Data")
     description = models.TextField(verbose_name="Materiais/Serviços")
     amount = models.FloatField(verbose_name="Quantidade")
@@ -113,7 +107,7 @@ class Supply(models.Model):
         verbose_name_plural = 'Materiais/Serviços'
 
     def __str__(self):
-        return self.description
+        return f'{self.id}: {self.description}'
 
 
 class Invoice(models.Model):
@@ -125,7 +119,7 @@ class Invoice(models.Model):
     issue = models.CharField(max_length=255, verbose_name="Defeito")
     type_of_invoice = models.CharField(max_length=255, choices=TYPE_OF_INVOICE, verbose_name="Tipo da Ordem de Serviço")
     invoice_description = models.TextField(verbose_name="Descrição do Serviço", blank=True)
-    supplies = models.ManyToManyField('invoices.supply', verbose_name="Serviços/Materiais", blank=True)
+    supplies = models.ManyToManyField('invoices.supply', verbose_name="Materiais/Serviços", blank=True)
     total_value = models.FloatField(verbose_name="Valor Total", blank=True, null=True)
     created_by = models.ForeignKey('accounts.BasicUser', on_delete=models.DO_NOTHING, verbose_name="Criada por", blank=True, null=True)
     status = models.CharField(max_length=255, choices=INVOICE_STATUS, verbose_name="Status da Ordem de Serviço", default="Pendente")
@@ -136,4 +130,4 @@ class Invoice(models.Model):
         verbose_name_plural = 'Ordens de Serviço'
 
     def __str__(self):
-        return f'{self.client} #{self.id}'
+        return f'{self.id}: {self.client}'

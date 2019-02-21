@@ -34,6 +34,12 @@ urlpatterns = [
     url(r'^invoice/(?P<pk>\d+)/$', InvoiceDetailView.as_view(), name='invoice_detail'),
 
     #
+    url(r'^invoice/status/update$', InvoiceStatusUpdateView.as_view(), name='invoice_status_update'),
+
+    #
+    url(r'^invoice/supplies/update$', InvoiceSuppliesUpdateView.as_view(), name='invoice_supplies_update'),
+
+    #
     url(r'^invoice/(?P<pk>\d+)/delete/$', InvoiceDeleteView.as_view(), name='invoice_delete'),
 
     # app admin

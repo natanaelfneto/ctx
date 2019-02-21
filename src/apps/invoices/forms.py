@@ -26,6 +26,7 @@ class InvoiceForm(forms.ModelForm):
     def save(self, commit=True):
         thisObject = super(InvoiceForm, self).save(commit=False)
         if commit:
+            print(thisObject)
             thisObject.save()
             self.save_m2m()
         return thisObject

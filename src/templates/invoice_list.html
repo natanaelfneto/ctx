@@ -91,13 +91,21 @@
                                         </div>
                                     </div>
                                     {% elif object.status == "Em Aberto" %}
-                                    <a type="button" class="btn btn-default" href="#">
-                                        {{ object.status }}
-                                    </a>
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <a type="button" class="btn btn-warning" href="#">
+                                                {{ object.status }}
+                                            </a>
+                                        </div>
+                                    </div>
                                     {% elif object.status == "Paga" %}
-                                    <a type="button" class="btn btn-default" href="#">
-                                        {{ object.status }}
-                                    </a>
+                                    <div style="display: flex;">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <a type="button" class="btn btn-success" href="#">
+                                                {{ object.status }}
+                                            </a>
+                                        </div>
+                                    </div>
                                     {% endif %}
                                 </td>
                                 <td>

@@ -10,6 +10,8 @@ def invoice_number_mask(value, arg):
         masked_value = f'({value[0:1]}) {value[2:4]}-{value[5:7]}-{value[8:10]}'        
     elif str(arg) == "cnpj":
         masked_value = f'{value[0:1]}.{value[2:4]}.{value[5:7]}/{value[8:11]}-{value[12:13]}'
+    if str(arg) == "value":
+        masked_value = f'R$ {float(value):.2f}'
     else:
         masked_value = value
 

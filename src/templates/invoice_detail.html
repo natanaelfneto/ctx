@@ -108,12 +108,40 @@
     <div class="alert alert-warning" style="margin-bottom: 0px;" role="alert">
         Esta Ordem de Serviço ainda está com sua finalização <b>Pendente</b>
     {% elif object.status == "Em Aberto" %}
-    <div class="alert alert-danger" style="margin-bottom: 0px;" role="alert">
+    <div class="alert alert-warning" style="margin-bottom: 0px;" role="alert">
         {{ object.status }}
     {% elif object.status == "Paga" %}
     <div class="alert alert-success" style="margin-bottom: 0px;" role="alert">
         {{ object.status }}
     {% endif %}
+        {% if object.status == "Pendente" %}
+        <div class="pull-right hidden-print">
+            <a 
+                style="position: relative; bottom: 5px;"
+                href="javascript:;" 
+                onclick="updateInvoiceStatus('{{ object.id }}', 'Em Aberto')" 
+                class="btn btn-sm btn-info">
+                <i class="fa fa-pencil-square-o m-r-5"></i> Finalizar Emição de Ordem de Serviço
+            </a>
+        </div>
+        {% elif object.status == "Em Aberto" %}
+        <div class="pull-right hidden-print">
+            <a 
+                style="position: relative; bottom: 5px; margin-right: 10px;"
+                href="javascript:;" 
+                onclick="updateInvoiceStatus('{{ object.id }}', 'Paga')" 
+                class="btn btn-sm btn-info">
+                <i class="fa fa-check m-r-5"></i> Marcar Ordem de Serviço como <b>Paga</b>
+            </a>
+            <a 
+                style="position: relative; bottom: 5px;"
+                href="javascript:;" 
+                onclick="window.print()" 
+                class="btn btn-sm btn-success">
+                <i class="fa fa-print m-r-5"></i> Print
+            </a>
+        </div>
+        {% elif object.status == "Paga" %}
         <div class="pull-right hidden-print">
             <a 
                 style="position: relative; bottom: 5px;"
@@ -123,11 +151,12 @@
                 <i class="fa fa-print m-r-5"></i> Print
             </a>
         </div>
+        {% endif %}
     </div>
 </div>
 <div class="invoice">
     <div class="invoice-company" style="margin-bottom: 0px;">
-        <small>Ordem de Serviço
+        <small id="os_id" os_id="{{ object.id }}">Ordem de Serviço
             <b>{{ object.date|date:"y" }}{{ object.id|invoice_number_mask:object.type_of_invoice }}</b>
         </small>
         <span style="position: absolute; right: 40px;">
@@ -150,7 +179,7 @@
                 {{ object.service_address }}<br>
                 CEP: {{ object.service_address.zip_code }},
                 {{ object.service_address.city }}/{{ object.service_address.state }}<br>
-                Phone: {{ object.client.phone|mask:"phone" }}<br>
+                <span class="mask-phone-cell">Phone: {{ object.client.phone }}</span><br>
                 CNPJ: {{ object.client.national_legal_number|mask:"cnpj" }}<br>
                 {% if object.client.state_legal_number %}
                     Inscrição Estadual: {{ object.client.state_legal_number }}<br>
@@ -184,14 +213,61 @@
             <table id="supplyTable" class="table table-invoice">
                 <thead>
                     <tr>
-                        <th class="col-md-6">DESCRITIVO DE MATERIAIS, SERVIÇO E TERCEIROS</th>
+                        <th class="col-md-5">DESCRITIVO DE MATERIAIS, SERVIÇO E TERCEIROS</th>
                         <th class="col-md-2 text-center">Data</th>
-                        <th class="col-md-1 text-center">QTD</th>
+                        <th class="col-md-2 text-center">QTD</th>
                         <th class="col-md-2 text-center">PARCIAL</th>
                         <th class="col-md-1"></th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for supply in object.supplies.all %}
+                    <tr id="{{ supply.id }}">
+                        <td class="col-md-6"><span class="description">{{ supply.description }}</span></td>
+                        <td class="col-md-2 text-center">
+                            <span class="date">
+                                {% language 'pt' %}{{ supply.date|date:"D, d/m/Y" }}{% endlanguage %}
+                            </span>
+                        </td>
+                        <td class="col-md-1 text-center">
+                            <span class="amount">{{ supply.amount }}</span>
+                            <span class="unit">{{ supply.unit }}</span>
+                        </td>
+                        <td class="col-md-2 text-center"><span class="value">{{ supply.value|mask:"value" }}</span></td>
+                        <td class="col-md-1 print-hidden">
+                            <div style="display: flex;">
+                                <div 
+                                    class="btn-group" 
+                                    role="group"
+                                    style="margin-left: auto; margin-right: auto;">
+                                    <!-- <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default"
+                                        href="#/"
+                                        onclick="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-edit" style="color:#277777;"></i>
+                                        </div>
+                                    </a> -->
+                                    {% if object.status == "Pendente" %}
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        href="#/"
+                                        onclick="removeSupply(this)">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-close" style="color: red;"></i>
+                                        </div>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if object.status == "Pendente" %}
                     <tr id="addNewSupplyButton" class="print-hidden">
                         <td></td>
                         <td></td>
@@ -210,16 +286,19 @@
                             </div>
                         </td>
                     </tr>
+                    {% endif %}
                     <tr id="addNewSupplyObject" class="print-hidden" style="display: none;">
-                        <td class="col-md-6">
+                        <td class="col-md-5">
                             <input
+                                id="12"
                                 type="text" 
                                 class="form-control description" 
                                 style="width: 100%;" 
                                 placeholder="Material/Serviço">
                         </td>
                         <td class="col-md-2 text-center">
-                            <input 
+                            <input
+                                name="date"
                                 type="text" 
                                 class="form-control date" 
                                 style="
@@ -249,9 +328,9 @@
                                         margin-right: auto; 
                                         text-align: center;">
                                     <option value=""> -- </option>
-                                    <option value="Kilômetro(s)">Km</option>
-                                    <option value="Kilograma(s)">Kg</option>
-                                    <option value="Unidade(s)">Uni</option>
+                                    <option value="Km">Km</option>
+                                    <option value="Kg">Kg</option>
+                                    <option value="Uni">Uni</option>
                                     <option value="Hora(s)">H</option>
                                 </select>
                             </div>
@@ -299,43 +378,43 @@
                         </td>
                     </tr>
                     <tr id="standardTableRow" class="print-hidden" style="display: none;">
-                            <td class="col-md-6"><span class="description">Material/Serviço</span></td>
-                            <td class="col-md-2 text-center"><span class="date">Data</span></div></td>
-                            <td class="col-md-1 text-center">
-                                <span class="amount">Quantidade</span>
-                                <span class="unit">Unidade</span>
-                            </td>
-                            <td class="col-md-2 text-center"><span class="value">Valor</span></td>
-                            <td class="col-md-1 print-hidden">
-                                <div style="display: flex;">
-                                    <div 
-                                        class="btn-group" 
-                                        role="group"
-                                        style="margin-left: auto; margin-right: auto;">
-                                        <a 
-                                            style="background-color: white; border: none;"
-                                            type="button" 
-                                            class="btn btn-default"
-                                            href="#/"
-                                            onclick="">
-                                            <div style="margin-left: auto; margin-right: auto;">
-                                                <i class="fa fa-edit" style="color:#277777;"></i>
-                                            </div>
-                                        </a>
-                                        <a 
-                                            style="background-color: white; border: none;"
-                                            type="button" 
-                                            class="btn btn-default" 
-                                            href="#/"
-                                            onclick="removeSupply(this)">
-                                            <div style="margin-left: auto; margin-right: auto;">
-                                                <i class="fa fa-close" style="color: red;"></i>
-                                            </div>
-                                        </a>
-                                    </div>
+                        <td class="col-md-6"><span class="description">Material/Serviço</span></td>
+                        <td class="col-md-2 text-center"><span class="date">Data</span></td>
+                        <td class="col-md-1 text-center">
+                            <span class="amount">Quantidade</span>
+                            <span class="unit">Unidade</span>
+                        </td>
+                        <td class="col-md-2 text-center"><span class="value">Valor</span></td>
+                        <td class="col-md-1 print-hidden">
+                            <div style="display: flex;">
+                                <div 
+                                    class="btn-group" 
+                                    role="group"
+                                    style="margin-left: auto; margin-right: auto;">
+                                    <!-- <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default"
+                                        href="#/"
+                                        onclick="">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-edit" style="color:#277777;"></i>
+                                        </div>
+                                    </a> -->
+                                    <a 
+                                        style="background-color: white; border: none;"
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        href="#/"
+                                        onclick="removeSupply(this)">
+                                        <div style="margin-left: auto; margin-right: auto;">
+                                            <i class="fa fa-close" style="color: red;"></i>
+                                        </div>
+                                    </a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -344,15 +423,24 @@
             </div>
             <div class="invoice-price-right">
                 <small>TOTAL</small>
-                <span style="font-size: 20px;">R$ {{ object.total_value|multiply:1 }}</span>
+                <span id="total_value" style="font-size: 20px;">R$ {{ object.total_value|multiply:1 }}</span>
             </div>
         </div>
         <hr style="margin-bottom: 0px;;">
+        {% if object.status == "Pendente" %}
+        <img 
+            class="d-block m-auto" 
+            style="display: block; position: relative; top: 30px; right: 5px;" 
+            src="{% static 'img/ctx/pendente.png' %}" 
+            height="auto" width="150px">
+        {% else %}
         <img 
             class="d-block m-auto" 
             style="display: block; position: relative; top: 30px; right: 5px;" 
             src="{% static 'img/ctx/nunes.png' %}" 
             height="auto" width="150px">
+        {% endif %}
+        
         <div class="text-center" style="position: relative; top: 5px;">
             <h5>José Nunes da Silva Filho</h5>
         </div>
@@ -391,13 +479,52 @@
         </p>
         <p class="text-center">
             <span class="m-r-10"><i class="fa fa-globe"></i> https://ctx.com</span>
-            <span class="m-r-10"><i class="fa fa-phone"></i> (62) 3093-5019</span>
+            <span class="m-r-10">
+                <i class="fa fa-phone"></i>
+                <span>(62) 3093-5019</span>
+            </span>
             <span class="m-r-10"><i class="fa fa-envelope"></i> nunesctx@gmail.com</span>
             <span class="m-r-10"><i class="fa fa-envelope"></i> CNPJ 01.276.117/0001-65</span>
         </p>
     </div>
 </div>
 <script>
+    //
+    function ajax_call(method, url, object) {
+        /*
+        */
+        // start new instance
+        var xhr = new XMLHttpRequest();
+        // open conection
+        xhr.open(method, url);
+        // add json header
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // add csrf token header
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        // function to be trigered on load
+        xhr.onload = function() {
+            if (xhr.status !== 200) {
+                console.log(`An error happened: ${xhr.status}`)
+            }
+        };
+        // send object
+        xhr.send(object);
+    }
+    //
+    function updateInvoiceStatus(invoice_pk, status) {
+        /*
+        */
+        var object = 
+        {
+            pk: invoice_pk,
+            status: status
+        }
+        // make ajax call to update invoice supply values 
+        ajax_call('POST', `/invoice/status/update`, JSON.stringify(object));
+        // redirect page after update invoice status
+        window.location.replace("{% url 'invoice_list' %}");
+    }
+    //
     function addNewSupply() {
         /*
         Function to select the element with inputs, clone it,
@@ -405,36 +532,93 @@
         */
         let source = document.getElementById("addNewSupplyObject");
         let last_supply = document.getElementById("addNewSupplyButton");
-
         // clone original element
         cloned_source = source.cloneNode(true);
-
         // change display attribute from 'none' to 'table-row'
         cloned_source.style.display = "table-row";
-
-        //
+        // remove id from cloned element
         cloned_source.id = "";
-
+        // keep all description on uppercase
+        cloned_source.querySelector(".description").addEventListener('input', function() {
+            this.value = this.value.toUpperCase()
+        });
+        // keep all date from non numerical characters and at dd/mm/yyyy format
+        cloned_source.querySelector(".date").addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g,'');
+            var day = (this.value.substring(0, 2) < 32 ? this.value.substring(0, 2) : 31);
+            var month = (this.value.substring(2, 4) < 13 ? this.value.substring(2, 4): 12);
+            var year = (this.value.substring(4, 8) < 2050 ? this.value.substring(4, 8): 2050);
+            var year = (this.value.substring(4, 8) > 2000 ? this.value.substring(4, 8): 2000);
+            this.value = `${day}/${month}/${year}`;
+        });
+        // keep all amount values from non numerical characters
+        cloned_source.querySelector(".amount").addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9$.]/g,'');
+        });
+        // keep all values from non numerical characters
+        cloned_source.querySelector(".value").addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g,'');
+            this.value = `R$ ${this.value}`;
+        });
+        // all 'R$' , coma and right zeros to values
+        cloned_source.querySelector(".value").addEventListener('focusout', function() {
+            this.value = this.value.replace(/\D/g,'');
+            this.value = `R$ ${this.value}.00`;
+        });
         // insert cloned element after last present supply element
         last_supply.parentNode.insertBefore(cloned_source, last_supply);
+        // add datepicker to new table row date input
+        addDatePicker('input[name="date"]');
     }
-
+    //
     function removeSupply(self) {
         /*
         Function to remove a row from table '<tr>'
         */
-        self.closest("tr").remove();
+        // setting up variables
+        const invoice_pk = '{{ object.id }}';
+        var self_row = self.closest("tr");
+        let supply_id = self_row.id;
+        // get value span element
+        let value_span = self_row.querySelector(".value");
+        // clean value non float characters
+        var value = parseFloat(value_span.textContent.replace('R$',''));
+        //
+        var calculated_total_value = document.getElementById("total_value").textContent
+        //
+        var calculated_total_value = parseFloat(calculated_total_value.replace('R$',''));
+        // reduce found value from total value
+        calculated_total_value = calculated_total_value - value;
+        // create a data object
+        var object =
+        {
+            pk: invoice_pk,
+            type: 'removeSupply',
+            supply: {
+                pk: supply_id
+            },
+            total_value: calculated_total_value
+        }
+        // make ajax call to update invoice supply values 
+        ajax_call('POST', `/invoice/supplies/update`, JSON.stringify(object));
+        // remove row
+        self_row.remove();
+        // put the obtained value into total_value html object
+        document.getElementById("total_value").textContent = `R$ ${calculated_total_value}.00`;
     }
-
+    //
     function editSupply() {
-        /**/
+        /*
+        Future implementation
+        */
     }
-
+    //
     function confirmSupply(self) {
         /*
         Function to transform row of editable inputs
         into a fixed printable table row
         */
+        const invoice_pk = '{{ object.id }}';
         let source = document.getElementById("standardTableRow");
         let self_row = self.closest("tr");
         // clone original element
@@ -443,7 +627,10 @@
         cloned_source.style.display = "table-row";
         // removing id from cloned element
         cloned_source.id = "";
+        // make it printable
+        cloned_source.classList.remove("print-hidden")
         // setting up variables
+        let supply_id = self_row.id;
         let supply_date = '';
         let supply_description = '';
         let supply_amount = '';
@@ -482,8 +669,16 @@
             alert("This element has no valid children!");
         }
         // check if any value from inputs are empty or null
-        if (supply_description && supply_amount && supply_unit && supply_value && supply_date) {
-            validation_flag = true;
+        if (supply_description && supply_unit && supply_date) {
+            if (parseFloat(supply_amount) && parseFloat(supply_value.replace('R$',''))) {
+                validation_flag = true;
+            } else if (!parseFloat(supply_amount)){
+                alert(`Uma quantidade de "${supply_amount}" não é válida`);
+            } else if (!parseFloat(supply_value)) {
+                alert(`Um valor de "${supply_value}" não é válido`);
+            }
+        } else {
+            alert(`Todos os campos são obrigatórios!`);
         }
         //
         if (validation_flag) {
@@ -519,8 +714,47 @@
             self_row.parentNode.insertBefore(cloned_source, self_row);
             // remove editable row
             self_row.remove();
-        } else {
-            alert("Field value is invalid!");
+            // recalculate total value of the invoice
+            var calculated_total_value = 0;
+            // get supply table table
+            var supply_table = document.getElementById("supplyTable");
+            // filter only table body
+            var supply_table = supply_table.querySelector("tbody");
+            // check if there are valid rows inside selected table body
+            if (supply_table.hasChildNodes()) {
+                var children = supply_table.childNodes;
+                // loop through children elements
+                for (var i = 0; i < children.length; i++) {
+                    // check for valid content within found children
+                    if (children[i].hasChildNodes() && !children[i].classList.contains("print-hidden")) {
+                        // get value span element
+                        let value_span = children[i].querySelector(".value");
+                        // clean value non float characters
+                        var value = parseFloat(value_span.textContent.replace('R$',''));
+                        // sum found value with total value
+                        calculated_total_value = calculated_total_value + value;
+                    }
+                }
+            }
+            // create a data object
+            var object =
+            {
+                pk: invoice_pk,
+                type: 'addNewSupply',
+                supply: {
+                    pk: supply_id,
+                    amount: supply_amount,
+                    date: supply_date,
+                    description: supply_description,
+                    unit: supply_unit,
+                    value: supply_value.replace('R$','')
+                },
+                total_value: calculated_total_value
+            }
+            // make ajax call to update invoice supply values 
+            ajax_call('POST', `/invoice/supplies/update`, JSON.stringify(object));
+            // put the obtained value into total_value html object
+            document.getElementById("total_value").textContent = `R$ ${calculated_total_value}.00`;
         }
     }
 </script>

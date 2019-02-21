@@ -16,7 +16,9 @@ SECRET_KEY = '1-d#9f6nj@n9@_f=twl8t8rz&zb)iujj)2f-k-+(n7u*4&-l(c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'polar-basin-13919.herokuapp.com'
+]
 
 # Application definition
 

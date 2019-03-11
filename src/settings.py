@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# python imports
 import os
 import sys
 
@@ -17,7 +19,8 @@ SECRET_KEY = '1-d#9f6nj@n9@_f=twl8t8rz&zb)iujj)2f-k-+(n7u*4&-l(c'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ctxadmin.herokuapp.com'
+    'ctxadmin.herokuapp.com',
+    '*',
 ]
 
 # Application definition

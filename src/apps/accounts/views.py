@@ -47,7 +47,7 @@ class LogoutView(RedirectView):
         logout(request)
         return super(LogoutView, self).get(request, *args, **kwargs)
 
-
+        
 # Users Classes
 class AddUserView(LoginRequiredMixin, CreateView):
     template_name = 'accounts_add.html'
